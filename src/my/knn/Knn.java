@@ -30,6 +30,7 @@ public class Knn {
 
     private KnnResult voteKnnResult(List<Item> copy, Item sample, Dataset data, ProximityMeasure m, List<Metric> metrics, Voting v) {
         CountingSet<Attribute> counts = new CountingSet<>();
+        boolean smallerBetter = true;
         switch(v) {
             case EqualWeights:
                 for(Item i : copy) {
@@ -49,6 +50,7 @@ public class Knn {
                 }
                 break;
             case OneMinusDistanceWeighted:
+                smallerBetter = false;
                 for(Item i : copy) {
                     double dist = 1.0 - m.distance(metrics, sample, i, data);
                     counts.increment(i.attributes.get(Dataset.classAttribute(data)), dist);
@@ -59,7 +61,9 @@ public class Knn {
         }
         Entry<Attribute, Double> winner = null;
         for (Entry<Attribute, Double> e : counts.entrySet()) {
-            if (winner == null || winner.getValue() < e.getValue()) {
+            if (winner == null || 
+                    (smallerBetter ? winner.getValue() < e.getValue() 
+                    : winner.getValue() > e.getValue())) {
                 winner = e;
                 // this deterministically chooses first equal-item in case of conflict, but
                 // in an ideal implementation, one should be picked evenly from the distribution

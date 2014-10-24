@@ -117,4 +117,24 @@ String manhattanData =
         assertTrue(((double)correctlyClassified)/(correctlyClassified+erroneouslyClassified) > 0.95);
         
     }
+
+String hvdmData =
+"1,0,X,A\n"+
+"1,0,Y,A\n"+
+"1,1,Z,B\n"+
+"0,0,X,A\n"+
+"1,0,Y,B\n"
+;
+    Dataset hds = new Csv().from(new StringReader(hvdmData), ",");
+    int HCL = Dataset.classAttribute(hds);
+    Item htest = hds.items.get(3);
+
+    @Test
+    public void testHVDM() {
+        Knn.KnnResult res = knn.knn(htest, hds, 3, ProximityMeasure.HVDM_2, Voting.EqualWeights);
+        assertEquals("A", res.predictedClass.toString());
+        assertEquals(hds.items.get(0), res.nearestNeighbours.get(1));
+        assertEquals(hds.items.get(1), res.nearestNeighbours.get(2));
+    }
+
 }
