@@ -2,6 +2,22 @@ package my;
 
 public interface Attribute extends Comparable {
 
+    static public class ask {
+        static public int 
+                tCONT =      0,
+                tBININT =    1,
+                tINT =       1|2,
+                tBINSTR =    4,
+                tSTR =       4|8
+                ;
+        static public int type(Attribute a) {
+            if (a instanceof Attribute.BIAttribute) {          return tBININT; } 
+            else if (a instanceof Attribute.IAttribute) {      return tINT; } 
+            else if (a instanceof Attribute.BSAttribute) {     return tBINSTR; } 
+            else if (a instanceof Attribute.SAttribute) {      return tSTR; }
+            else return 0;
+        }
+    }
     
     static public class clone {
         static public Attribute a(Attribute o) {

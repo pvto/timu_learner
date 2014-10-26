@@ -3,13 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Elmo-app">
-            <file>file:/home/paavoto/src/kmeans/src/my/Attribute.java</file>
-            <file>file:/home/paavoto/src/kmeans/src/my/Csv.java</file>
-            <file>file:/home/paavoto/src/kmeans/src/my/knn/Knn.java</file>
-            <file>file:/home/paavoto/src/kmeans/src/my/Item.java</file>
-            <file>file:/home/paavoto/src/kmeans/src/my/ProximityMeasure.java</file>
-            <file>file:/home/paavoto/src/kmeans/src/my/Voting.java</file>
-            <file>file:/home/paavoto/src/kmeans/src/my/Dataset.java</file>
+            <file>file:/home/paavoto/src/timu_learner/src/my/ProximityMeasure.java</file>
+            <file>file:/home/paavoto/src/timu_learner/src/my/knn/Knn.java</file>
+            <file>file:/home/paavoto/src/timu_learner/test/my/knn/KnnTest.java</file>
+            <file>file:/home/paavoto/src/timu_learner/src/my/Csv.java</file>
         </group>
     </open-files>
 </project-private>

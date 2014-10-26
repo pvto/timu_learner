@@ -11,10 +11,12 @@ import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
+import static my.Attribute.ask.*;
 
 public class Csv {
 
-    static public final String[] BINSTRS = {"1","0","true","false","yes","no"};
+    static public final String[] BINSTRS = {"true","false","yes","no"};
     static public final String ZEROREG = "0|false|no";
     
     public Dataset from(Iterator<String> it, String separator) {
@@ -34,67 +36,45 @@ public class Csv {
             int i = 0;
             for (String s : ss) {
                 s = s.trim();
-                int PREVTYP = 0;
+                int PREVTYP = tCONT;
                 if (last != null) {
-                    Attribute i_attr = last.attributes.get(i);
-                    if (i_attr instanceof Attribute.BIAttribute) {
-                        PREVTYP = 1;
-                    } else if (i_attr instanceof Attribute.IAttribute) {
-                        PREVTYP = 1 | 2;
-                    } else if (i_attr instanceof Attribute.BSAttribute) {
-                        PREVTYP = 4;
-                    } else if (i_attr instanceof Attribute.SAttribute) {
-                        PREVTYP = 4 | 8;
-                    }
+                    Attribute preva = last.attributes.get(i);
+                    PREVTYP = Attribute.ask.type(preva);
                 }
                 if ("".equals(s)) {
                     item.attributes.add(Attribute.MISSING);
-                } else if (PREVTYP == 4 && in(BINSTRS, s.toLowerCase())) {
+                } else if ((last == null || PREVTYP == tBINSTR) && in(BINSTRS, s.toLowerCase())) {
                     item.attributes.add(new Attribute.BSAttribute(s));
-                } else if (PREVTYP == 4) {
-                    for(Item previ : ds.items) {
-                        Attribute.BSAttribute bs = (Attribute.BSAttribute) previ.attributes.get(i);
-                        previ.attributes.set(i, new Attribute.SAttribute(bs.value));
-                    }
+                } else if (PREVTYP == tBINSTR) {
+                    conv(ds.items, i, PREVTYP, tSTR);
                     item.attributes.add(new Attribute.SAttribute(s));
-                } else if (PREVTYP == (4 | 8)) {
+                } else if (PREVTYP == tSTR) {
                     item.attributes.add(new Attribute.SAttribute(s));
                 } else {
                     try {
                         Double d = Double.parseDouble(s);
                         int iv = d.intValue();
                         boolean isi = new Double(iv).equals(d);
-                        if ((last == null || (PREVTYP & 1) == 1) && isi) {
+                        if ((last == null || (PREVTYP & tBININT) == tBININT) && isi) {
                             boolean bisi = iv == 0 || iv == 1;
-                            if (bisi && (last == null || PREVTYP == 1)) {
+                            if (bisi && (last == null || PREVTYP == tBININT)) {
                                 item.attributes.add(new Attribute.BIAttribute(iv));
                             } else {
-                                if (PREVTYP == 1) {
-                                    for (Item previ : ds.items) {
-                                        Attribute.BIAttribute ia = (Attribute.BIAttribute) previ.attributes.get(i);
-                                        previ.attributes.set(i, new Attribute.IAttribute(ia.value));
-                                    }
+                                if (PREVTYP == tBININT) {
+                                    conv(ds.items, i, PREVTYP, tINT);
                                 }
                                 item.attributes.add(new Attribute.IAttribute(iv));
                             }
                         } else {
                             item.attributes.add(new Attribute.DAttribute(d));
-                            if ((PREVTYP & 1) == 1) {
-                                for (Item previ : ds.items) {
-                                    Attribute.IAttribute ia = (Attribute.IAttribute) previ.attributes.get(i);
-                                    previ.attributes.set(i, new Attribute.DAttribute(ia.value));
-                                }
+                            if ((PREVTYP & tBININT) == tBININT) {
+                                conv(ds.items, i, PREVTYP, tCONT);
                             }
                         }
                     } catch (NumberFormatException e) {
                         item.attributes.add(new Attribute.SAttribute(s));
-                        if ((PREVTYP & 4) != 4) {
-                            for (Item previ : ds.items) {
-                                Attribute a = previ.attributes.get(i);
-                                previ.attributes.set(i, new Attribute.SAttribute(
-                                        a instanceof Attribute.IAttribute ? String.valueOf(((Attribute.IAttribute) a).value)
-                                                : String.valueOf(((Attribute.IAttribute) a).value)));
-                            }
+                        if ((PREVTYP & tSTR) != tSTR) {
+                            conv(ds.items, i, PREVTYP, tSTR);
                         }
                     }
                 }
@@ -106,6 +86,33 @@ public class Csv {
         return ds;
     }
 
+    static private void conv(List<Item> items, int column, int from, int to) {
+        for(Item previ : items) {
+            Attribute a = previ.attributes.get(column);
+            int oldtype = Attribute.ask.type(a);
+            if (from != oldtype) {
+                continue;
+            }
+            switch(from) {
+                case 0:
+                    if (to == tSTR) { previ.attributes.set(column, new Attribute.SAttribute(Double.toString(((Attribute.DAttribute)a).value))); }
+                    break;
+                case 1 | 2:
+                    if (to == tINT) { previ.attributes.set(column, new Attribute.IAttribute(((Attribute.BIAttribute)a).value)); }
+                    else
+                    if (to == tCONT) { previ.attributes.set(column, new Attribute.DAttribute(((Attribute.BIAttribute)a).value)); }
+                    else
+                    if (to == tSTR) { previ.attributes.set(column, new Attribute.SAttribute(Integer.toString(((Attribute.IAttribute)a).value))); }
+                    break;
+                case 4 | 8: 
+                    if (to == tBINSTR) { previ.attributes.set(column, new Attribute.BSAttribute(((Attribute.BSAttribute)a).value)); }
+                    else
+                    if (to == tSTR) { previ.attributes.set(column, new Attribute.SAttribute(((Attribute.BSAttribute)a).value)); }
+                    break;
+            }
+        }
+    }
+    
     private static boolean in(String[] ss, String s) {
         for(String x : ss) {
             if (x.equals(s)) {
