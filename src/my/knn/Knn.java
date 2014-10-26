@@ -17,6 +17,10 @@ public class Knn {
     static public class KnnResult {
         public Attribute predictedClass;
         public List<Item> nearestNeighbours;
+        public String toString() {
+            return "Predicted class: " + predictedClass + "\n"
+                    + "Nearest neighbours: " + nearestNeighbours;
+        }
     }
 
     public KnnResult knn(Item sample, Dataset data, int n, ProximityMeasure m, Voting v) {
