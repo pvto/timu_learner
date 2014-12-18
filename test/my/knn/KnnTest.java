@@ -42,6 +42,7 @@ String data =
     public void testKnn2() {
         Knn.KnnResult res = knn.knn(test, ds, 2, ProximityMeasure.HEOM, Voting.InverseDistanceWeighted);
         assertEquals(2, res.nearestNeighbours.size());
+        assertEquals(test, res.nearestNeighbours.get(0));
         assertEquals(ds.items.get(1), res.nearestNeighbours.get(1));
         assertEquals(Item.a(test, CLASS), res.predictedClass);
     }
