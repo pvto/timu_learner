@@ -2,6 +2,9 @@ package my;
 
 import java.util.ArrayList;
 import java.util.List;
+import my.Attribute.BIAttribute;
+import my.Attribute.BSAttribute;
+import my.Attribute.DAttribute;
 
 public class Item {
 
@@ -19,4 +22,10 @@ public class Item {
         }
     }
     public String toString() { return attributes.toString(); }
+
+    
+    public int iattr(int i) {       return ((BIAttribute) attributes.get(i)).value; }
+    public double dattr(int i) {    return ((DAttribute) attributes.get(i)).value; }
+    public String sattr(int i) {    return ((BSAttribute) attributes.get(i)).value; }
+
 }

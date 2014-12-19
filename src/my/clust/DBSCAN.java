@@ -1,6 +1,5 @@
 package my.clust;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -69,7 +68,7 @@ public class DBSCAN {
             }
         }
         // prepare random pickup order 
-        List<Integer> rndord = range(0, ds.size());
+        List<Integer> rndord = Int.range(0, ds.size());
         Collections.shuffle(rndord);
         // do the main algorithm
         int currCluster = 0;
@@ -111,9 +110,4 @@ public class DBSCAN {
         }
     }
 
-    static public List<Integer> range(int start, int end) {
-        List<Integer> res = new ArrayList<>(end - start);
-        for(int i = start; i < end; i++) { res.add(i); }
-        return res;
-    }
 }

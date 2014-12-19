@@ -4,9 +4,13 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group name="Elmo-app">
             <file>file:/home/paavoto/src/timu_learner/src/my/ProximityMeasure.java</file>
-            <file>file:/home/paavoto/src/timu_learner/src/my/knn/Knn.java</file>
             <file>file:/home/paavoto/src/timu_learner/test/my/knn/KnnTest.java</file>
-            <file>file:/home/paavoto/src/timu_learner/src/my/Csv.java</file>
+            <file>file:/home/paavoto/src/timu_learner/src/my/clust/DBSCAN.java</file>
+            <file>file:/home/paavoto/src/timu_learner/test/my/clust/DBSCANTest.java</file>
+            <file>file:/home/paavoto/src/timu_learner/src/my/f/Dist.java</file>
+            <file>file:/home/paavoto/src/timu_learner/src/my/Dataset.java</file>
+            <file>file:/home/paavoto/src/timu_learner/src/my/AttrProxMetric.java</file>
+            <file>file:/home/paavoto/src/timu_learner/src/my/Attribute.java</file>
         </group>
     </open-files>
 </project-private>

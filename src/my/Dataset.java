@@ -44,6 +44,11 @@ public class Dataset {
     }
     
     public int size() { return items.size(); }
+    public List<Attribute> column(int column) {
+        List<Attribute> col = new ArrayList<Attribute>(size());
+        for(Item i : items) { col.add(Item.a(i, column)); }
+        return col;
+    }
     public Item item(int row) { return items.get(row); }
     public Attribute min(int column) { return getCache().min(column); }
     public Attribute max(int column) { return getCache().max(column); }

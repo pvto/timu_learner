@@ -1,7 +1,6 @@
 package my.clust;
 
 import java.io.StringReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import my.AttrProxMetric;
@@ -9,6 +8,9 @@ import my.Csv;
 import my.Dataset;
 import my.Item;
 import my.ProximityMeasure;
+import my.f.Attr;
+import my.f.Int;
+import my.plot.Cout;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -31,24 +33,12 @@ String euclData =
     Dataset eds = new Csv().from(new StringReader(euclData), ",");
     DBSCAN dbscan = new DBSCAN();
     
-    static public List<Integer> uniq(int[] list) {
-        int[] ordered = Arrays.copyOf(list, list.length);
-        Arrays.sort(ordered);
-        List<Integer> res = new ArrayList<Integer>();
-        int next;
-        res.add(next = ordered[0]);
-        for(int i = 0; i < ordered.length; i++) {
-            if (ordered[i] != next) {
-                res.add(next = ordered[i]);
-            }
-        }
-        return res;
-    }
+
     @Test
     public void testEucl() {
         
         DBSCAN.DBSCANResult res = dbscan.dbscan(eds, 3, Math.sqrt(2.0), ProximityMeasure.Euclidean, null);
-        List<Integer> clusterInds = uniq(res.clusterings);
+        List<Integer> clusterInds = Int.uniq(res.clusterings);
         assertEquals(3, clusterInds.size());
 
         int target = DBSCAN.NOISE,
@@ -78,9 +68,9 @@ String laby =
 "z.zzz....zzzz...zzzz..zzzzz.z.z "+
 "z.z.zzzzzz..zzz.z..z..zzz.z.z.z "+
 "z.z.............z.........z.z.z "+
-"z.zzzzzzzzzzzzzzz  zzzzzzzz.z.z "+
+"z.zzzzzzzzzzzzzzz..zzzzzzzz.z.z "+
 "z.............................z "+
-"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz "
+"zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz"
 ;
     Dataset lds;
     {
@@ -100,14 +90,15 @@ String laby =
     public void testManh() {
         DBSCAN.DBSCANResult res = dbscan.dbscan(lds, 2, 0.5, ProximityMeasure.Manhattan, null);
         Item[][] clust = res.getClusters();
-        System.out.println(Arrays.toString(res.clusterings));
+        Cout.plot(System.out, lds.column(1), lds.column(0), Attr.icol(res.clusterings));
         assertEquals(3, clust.length);
-        
     }
 
+    
+    
 String words =
-"MINE\nMIND\nMINED\nMINCED\n"+
-"FAME\nNAME\nDAME\n"+
+"MINI\nMINE\nMIND\nMINED\nMINCED\n"+
+"FAME\nNAME\nSAME\n"+
 "OUTLIER"
 ;
     Dataset wds = new Csv().from(new StringReader(words), ",");

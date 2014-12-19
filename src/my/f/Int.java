@@ -1,9 +1,19 @@
 package my.f;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author pvto https://github.com/pvto
  */
 public class Int {
+
+    static public List<Integer> range(int start, int end) {
+        List<Integer> res = new ArrayList<>(end - start);
+        for(int i = start; i < end; i++) { res.add(i); }
+        return res;
+    }
 
     static public int min(int a, int b, int c) {
         if (a < b) {
@@ -34,5 +44,19 @@ public class Int {
             if (A[i] == val) { count++; }
         }
         return count;
+    }
+    
+    static public List<Integer> uniq(int[] list) {
+        int[] ordered = Arrays.copyOf(list, list.length);
+        Arrays.sort(ordered);
+        List<Integer> res = new ArrayList<Integer>();
+        int next;
+        res.add(next = ordered[0]);
+        for(int i = 0; i < ordered.length; i++) {
+            if (ordered[i] != next) {
+                res.add(next = ordered[i]);
+            }
+        }
+        return res;
     }
 }

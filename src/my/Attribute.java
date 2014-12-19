@@ -17,6 +17,10 @@ public interface Attribute extends Comparable {
             else if (a instanceof Attribute.SAttribute) {      return tSTR; }
             else return 0;
         }
+        static public boolean isd(Attribute a) { return a instanceof DAttribute; }
+        static public boolean isi(Attribute a) { return (type(a) & tBININT) == tBININT; }
+        static public boolean iss(Attribute a) { return (type(a) & tBINSTR) == tBINSTR; }
+        
     }
     
     static public class clone {
