@@ -1,9 +1,12 @@
 package my.clust;
 
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import my.AttrProxMetric;
+import my.Attribute;
+import my.Attribute.DAttribute;
 import my.Csv;
 import my.Dataset;
 import my.Item;
@@ -111,5 +114,25 @@ String words =
         DBSCAN.DBSCANResult res = dbscan.dbscan(wds, 2, 1.0, ProximityMeasure.Manhattan, wapm);
         System.out.println(Arrays.toString(res.clusterings));
         assertEquals(3, res.getClusters().length);
+    }
+    
+    
+    
+    Dataset pds = new Dataset();
+    {
+        for(int i = 0; i < 10000; i++) {
+            Item it = new Item();
+            it.attributes = new ArrayList<Attribute>();
+            for(Double d : new double[]{ Math.random(), Math.random() })
+                it.attributes.add(new DAttribute(d));
+            pds.items.add(it);
+        }
+    }
+    
+    @Test
+    public void testBig() {
+        DBSCAN.DBSCANResult res = dbscan.dbscan(pds, 10, 0.01, ProximityMeasure.Euclidean, null);
+        Item[][] clu = res.getClusters();
+        assertTrue(clu.length > 1);
     }
 }

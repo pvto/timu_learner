@@ -35,19 +35,23 @@ public class DBSCAN {
         
         public Item[][] getClusters() {
             
-            int clusters = Int.max(clusterings) - Int.min(clusterings) + 1;
+            int cmax = Int.max(clusterings),
+                cmin = Int.min(clusterings),
+                clusters = cmax - cmin + 1;
             Item[][] res = new Item[clusters][];
             
-            for(int clust = NOISE; clust < clusters - 1; clust++) {
+            int off = 0;
+            for(int clust = cmin; clust <= cmax; clust++) {
                 int count = Int.count(clusterings, clust);
-                res[clust + 1] = new Item[count];
+                res[off] = new Item[count];
                 int j = 0;
                 for(int i = 0; i < clusterings.length; i++) {
 
                     if(clusterings[i] != clust) { continue; }
-                    res[clust + 1][j++] = ds.item(i);
+                    res[off][j++] = ds.item(i);
 
                 }
+                off++;
             }
             return res;
         }
@@ -70,13 +74,11 @@ public class DBSCAN {
         // prepare random pickup order 
         List<Integer> rndord = Int.range(0, ds.size());
         Collections.shuffle(rndord);
-        // do the main algorithm
+        // start the main algorithm
         int currCluster = 0;
         int[] clusterings = res.clusterings;
         for(Integer off : rndord) {
-            if (clusterings[off] != UNCLUSTERED) {
-                continue;
-            }
+            if (clusterings[off] != UNCLUSTERED) { }
             else if (nbsize[off] == 1) {
                 // classify a NOISE point
                 clusterings[off] = NOISE;
