@@ -40,11 +40,6 @@ public interface Attribute extends Comparable {
                 throw new UnsupportedOperationException("toDouble:  unhandled Attribute type " + o.getClass());
         }
     }
-    
-    public interface Metric {
-
-        double difference(Attribute a, Attribute b);
-    }
 
     
     
@@ -207,75 +202,5 @@ public interface Attribute extends Comparable {
     }
 
 
-//---metrics---
-
-    static final public Metric DoNotMeasureMetric = new Metric() {
-        @Override
-        public double difference(Attribute a, Attribute b) {
-            return 0.0;
-        }
-    };
     
-    static final public Metric DMetric = new Metric() {
-
-        @Override
-        public double difference(Attribute a, Attribute b) {
-            if (a == MISSING || b == MISSING) {
-                return 1.0;
-            }
-            return Math.abs(((DAttribute) a).value - ((DAttribute) b).value);
-        }
-    };
-
-    static final public Metric BIMetric = new Metric() {
-
-        @Override
-        public double difference(Attribute a, Attribute b) {
-            if (a == MISSING || b == MISSING) {
-                return 1.0;
-            }
-            return Math.abs(((BIAttribute) a).value - ((BIAttribute) b).value);
-        }
-    };
-    
-    static final public Metric IMetric = BIMetric;
-
-    static final public Metric BSMetric = new Metric() {
-
-        @Override
-        public double difference(Attribute a, Attribute b) {
-            if (a == MISSING || b == MISSING) {
-                return 1.0;
-            }
-            String s = ((BSAttribute) a).value;
-            String t = ((BSAttribute) b).value;
-            return s.equals(t) ? 0.0 : 1.0;
-        }
-    };
-    
-    static final public Metric SMetric = BSMetric;
-    
-    static final public Metric ClassMetric  = new Metric() { 
-
-        @Override
-        public double difference(Attribute a, Attribute b) {
-            if (a == MISSING || b == MISSING) {
-                return 1.0;
-            }
-            else if (a == b) {
-                return 0.0;
-            }
-            else if (BSAttribute.class.isAssignableFrom(a.getClass()) 
-                    && BSAttribute.class.isAssignableFrom(b.getClass())) {
-                return BSMetric.difference(a, b);
-            }
-            else if (BIAttribute.class.isAssignableFrom(a.getClass()) 
-                    && BIAttribute.class.isAssignableFrom(b.getClass())) {
-                return BIMetric.difference(a, b);
-            }
-            return DMetric.difference(a, b);
-
-        }
-    
-    };
 }

@@ -15,7 +15,7 @@ public class Dataset {
     
     
     static public final int SUPERVISED = -1, UNSUPERVISED = -2;
-    
+
     static public class UnsupervisedDataset extends Dataset {
         {classAttribute = UNSUPERVISED;}
     }
@@ -43,6 +43,8 @@ public class Dataset {
         return n;        
     }
     
+    public int size() { return items.size(); }
+    public Item item(int row) { return items.get(row); }
     public Attribute min(int column) { return getCache().min(column); }
     public Attribute max(int column) { return getCache().max(column); }
     public double[] range(int column) { return getCache().range(column); }
@@ -196,14 +198,28 @@ public class Dataset {
         return s;
     }
     
+    
+    static public double[][] distances(Dataset ds, ProximityMeasure m, List<AttrProxMetric> metrics) {
+        if (metrics == null) {
+            metrics = ProximityMeasure.metrics.forDs(ds);
+        }
+        double[][] dist = new double[ds.size()][ds.size()];
+        for(int i = 0; i < ds.size(); i++) {
+            for(int j = i + 1; j < ds.size(); j++) {
+                dist[j][i] = dist[i][j] = m.distance(metrics, ds.item(i), ds.item(j), ds);
+            }
+            dist[i][i] = 0.0;
+        }
+        return dist;
+    }
 
     static public class ItemDistComparator implements Comparator<Item> {
         private final Item base;
         private final ProximityMeasure dm;
-        private final List<Attribute.Metric> metrics;
+        private final List<AttrProxMetric> metrics;
         private final Dataset ds;
         
-        public ItemDistComparator(Item base, ProximityMeasure dm, List<Attribute.Metric> metrics, Dataset ds) {
+        public ItemDistComparator(Item base, ProximityMeasure dm, List<AttrProxMetric> metrics, Dataset ds) {
             this.base = base;
             this.dm = dm;
             this.metrics = metrics;

@@ -4,6 +4,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import my.Attribute.BIAttribute;
+import static my.AttrProxMetric.BIMetric;
+import static my.AttrProxMetric.BSMetric;
+import static my.AttrProxMetric.DMetric;
+import static my.AttrProxMetric.DoNotMeasureMetric;
+import static my.AttrProxMetric.IMetric;
 
 public interface ProximityMeasure {
 //
@@ -24,7 +29,7 @@ public interface ProximityMeasure {
 //    }
 
     
-    double distance(List<Attribute.Metric> metrics, Item a, Item b, Dataset ds);
+    double distance(List<AttrProxMetric> metrics, Item a, Item b, Dataset ds);
 
     
 //implementations follow...
@@ -36,14 +41,14 @@ public interface ProximityMeasure {
     static final public ProximityMeasure Manhattan = new ProximityMeasure() {
 
         @Override
-        public double distance(List<Attribute.Metric> metrics, Item a, Item b, Dataset ds) {
+        public double distance(List<AttrProxMetric> metrics, Item a, Item b, Dataset ds) {
             double d = 0.0;
             int n = a.attributes.size();
             for (int i = n - 1; i >= 0; i--) {
                 if (Dataset.classAttribute(ds) == n) {
                     continue;
                 }
-                Attribute.Metric m = metrics.get(i);
+                AttrProxMetric m = metrics.get(i);
                 d += m.difference(a.attributes.get(i), b.attributes.get(i));
             }
             return d / n;
@@ -54,14 +59,14 @@ public interface ProximityMeasure {
     static final public ProximityMeasure Euclidean = new ProximityMeasure() {
 
         @Override
-        public double distance(List<Attribute.Metric> metrics, Item a, Item b, Dataset ds) {
+        public double distance(List<AttrProxMetric> metrics, Item a, Item b, Dataset ds) {
             double d = 0.0;
             int n = a.attributes.size();
             for (int i = n - 1; i >= 0; i--) {
                 if (Dataset.classAttribute(ds) == n) {
                     continue;
                 }
-                Attribute.Metric m = metrics.get(i);
+                AttrProxMetric m = metrics.get(i);
                 double adist = m.difference(a.attributes.get(i), b.attributes.get(i));
                 d += adist * adist;
             }
@@ -74,14 +79,14 @@ public interface ProximityMeasure {
     static final public ProximityMeasure SimpleMatchingCoefficient = new ProximityMeasure() {
 
         @Override
-        public double distance(List<Attribute.Metric> metrics, Item a, Item b, Dataset ds) {
+        public double distance(List<AttrProxMetric> metrics, Item a, Item b, Dataset ds) {
             double num = 0.0;
             int n = a.attributes.size();
             for (int i = n - 1; i >= 0; i--) {
                 if (Dataset.classAttribute(ds) == n) {
                     continue;
                 }
-                Attribute.Metric m = metrics.get(i);
+                AttrProxMetric m = metrics.get(i);
                 double adist = m.difference(a.attributes.get(i), b.attributes.get(i));
                 if (adist == 0) {
                     num++;
@@ -94,14 +99,14 @@ public interface ProximityMeasure {
     static final public ProximityMeasure JackardSimilarityCoefficient = new ProximityMeasure() {
 
         @Override
-        public double distance(List<Attribute.Metric> metrics, Item a, Item b, Dataset ds) {
+        public double distance(List<AttrProxMetric> metrics, Item a, Item b, Dataset ds) {
             double num = 0.0, den = 0.0;
             int n = a.attributes.size();
             for (int i = n - 1; i >= 0; i--) {
                 if (Dataset.classAttribute(ds) == n) {
                     continue;
                 }
-                Attribute.Metric m = metrics.get(i);
+                AttrProxMetric m = metrics.get(i);
                 double adist = m.difference(a.attributes.get(i), b.attributes.get(i));
                 if (adist == 0) {
                     if (!BIAttribute.isZero(a.attributes.get(i))) {
@@ -119,14 +124,14 @@ public interface ProximityMeasure {
     static final public ProximityMeasure DiceSimilarityCoefficient = new ProximityMeasure() {
 
         @Override
-        public double distance(List<Attribute.Metric> metrics, Item a, Item b, Dataset ds) {
+        public double distance(List<AttrProxMetric> metrics, Item a, Item b, Dataset ds) {
             double num = 0.0, den = 0.0;
             int n = a.attributes.size();
             for (int i = n - 1; i >= 0; i--) {
                 if (Dataset.classAttribute(ds) == n) {
                     continue;
                 }
-                Attribute.Metric m = metrics.get(i);
+                AttrProxMetric m = metrics.get(i);
                 double adist = m.difference(a.attributes.get(i), b.attributes.get(i));
                 if (adist == 0) {
                     if (!BIAttribute.isZero(a.attributes.get(i))) {
@@ -151,16 +156,16 @@ public interface ProximityMeasure {
     static final public ProximityMeasure HEOM = new ProximityMeasure() {
 
         @Override
-        public double distance(List<Attribute.Metric> metrics, Item a, Item b, Dataset ds) {
+        public double distance(List<AttrProxMetric> metrics, Item a, Item b, Dataset ds) {
             double d = 0.0;
             int n = a.attributes.size();
             for (int i = n - 1; i >= 0; i--) {
                 if (Dataset.classAttribute(ds) == i) {
                     continue;
                 }
-                Attribute.Metric m = metrics.get(i);
+                AttrProxMetric m = metrics.get(i);
                 double adist = m.difference(a.attributes.get(i), b.attributes.get(i));
-                if (m == Attribute.DMetric || m == Attribute.IMetric) {
+                if (m == DMetric || m == IMetric) {
                     //|a-b|/range
                     double[] range = ds.range(i);
                     d = d + Math.abs(adist) / (range[1] - range[0]);
@@ -180,7 +185,7 @@ public interface ProximityMeasure {
         public final double NOMEXP;
         public HVDM(double nomExp) { this.NOMEXP = nomExp; }
         @Override
-        public double distance(List<Attribute.Metric> metrics, Item a, Item b, Dataset ds) {
+        public double distance(List<AttrProxMetric> metrics, Item a, Item b, Dataset ds) {
             double d = 0.0;    
             int n = a.attributes.size();
             int clz = Dataset.classAttribute(ds);
@@ -189,13 +194,13 @@ public interface ProximityMeasure {
                 if (Dataset.classAttribute(ds) == i) {
                     continue;
                 }
-                Attribute.Metric m = metrics.get(i);
+                AttrProxMetric m = metrics.get(i);
                 Attribute aa = a.attributes.get(i);
                 Attribute ba = b.attributes.get(i);
                 double adist = m.difference(aa, ba);
                 if (aa == Attribute.MISSING || ba == Attribute.MISSING) {
                     d = d + 1.0;
-                } else if (m == Attribute.DMetric || m == Attribute.IMetric) {
+                } else if (m == DMetric || m == IMetric) {
                     d = d + Math.abs(adist) / (4.0 * ds.std(i));
                 } else {    // HVDM for nominal attributes:  sqrt(sum[c](P[xa,c] - P[ya,c])^n)
                     for(Attribute c : C) {
@@ -213,10 +218,10 @@ public interface ProximityMeasure {
     
     static public class metrics {
 
-        static public List<Attribute.Metric> forDs(Dataset ds) {
+        static public List<AttrProxMetric> forDs(Dataset ds) {
             int n = Dataset.attributeCount(ds);
             int resolved = 0;
-            Attribute.Metric[] ms = new Attribute.Metric[n];
+            AttrProxMetric[] ms = new AttrProxMetric[n];
             Item item = ds.items.get(0);
             for (int i = 0; i < n; i++) {
                 if (ms[i] != null) {
@@ -224,13 +229,13 @@ public interface ProximityMeasure {
                 }
                 Class clz = item.attributes.get(i).getClass();
                 if (i == ds.classAttribute) {
-                    ms[i] = Attribute.DoNotMeasureMetric;
+                    ms[i] = DoNotMeasureMetric;
                 } else if (clz == Attribute.DAttribute.class) {
-                    ms[i] = Attribute.DMetric;
+                    ms[i] = DMetric;
                 } else if (Attribute.BIAttribute.class.isAssignableFrom(clz)) {
-                    ms[i] = Attribute.BIMetric;
+                    ms[i] = BIMetric;
                 } else if (Attribute.BSAttribute.class.isAssignableFrom(clz)) {
-                    ms[i] = Attribute.BSMetric;
+                    ms[i] = BSMetric;
                 } else {
                     continue;
                 }

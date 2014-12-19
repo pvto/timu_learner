@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import my.Attribute;
-import my.Attribute.Metric;
+import my.AttrProxMetric;
 import my.Dataset;
 import my.ProximityMeasure;
 import my.Item;
@@ -25,14 +25,14 @@ public class Knn {
 
     public KnnResult knn(Item sample, Dataset data, int n, ProximityMeasure m, Voting v) {
         List<Item> copy = new ArrayList<>(data.items);
-        List<Metric> metrics = ProximityMeasure.metrics.forDs(data);
+        List<AttrProxMetric> metrics = ProximityMeasure.metrics.forDs(data);
         Collections.sort(copy, new Dataset.ItemDistComparator(sample, m, metrics, data));
         copy = copy.subList(0, n);
         KnnResult res = voteKnnResult(copy, sample, data, m, metrics, v);
         return res;
     }
 
-    private KnnResult voteKnnResult(List<Item> copy, Item sample, Dataset data, ProximityMeasure m, List<Metric> metrics, Voting v) {
+    private KnnResult voteKnnResult(List<Item> copy, Item sample, Dataset data, ProximityMeasure m, List<AttrProxMetric> metrics, Voting v) {
         CountingSet<Attribute> counts = new CountingSet<>();
         boolean smallerBetter = true;
         switch(v) {
