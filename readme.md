@@ -14,9 +14,11 @@ There are slightly different versions of the DBSCAN algorithm, of which one is e
 ##References
 
 Ester, Kriegel, Sander, Xu: A density-based algorithm for discovering clusters in large spatial databases with noise, Proceedings of KDD-96, 1996.
+
 Han J., Kamber M.: Data Mining: Concepts and Techniques. Morgan Kaufmann, 2006.
 
-Course work definition
+##Course work definition
+
 The aim was to produce an implementation of the DBSCAN algorithm that can handle data of different kinds.  Nominal data, continuous data and mixed data should be handled.  Dataset and attribute handling, as well as proximity measuring, was based on the first course work part of the TIMU course.
 
 A second aim was to implement an algorithm that suggests a good Eps value for a dataset, based on a user supplied minPts value, the latter used as a k-value in k-distance calculation by the said algorithm.
@@ -27,8 +29,10 @@ Additionally, an implementation of a classic Levenshtein string distance algorit
 
 The implementation was written in Java.  It can be accessed fully from a web interface at https://github.com/pvto/timu_learner.  To clone the code into a local git repository, run:
 
+```
 mkdir timu_learner
 git clone https://github.com/pvto/timu_learner.git timu_learner
+```
 
 To build the project from sources, install Java 8 and Netbeans, run Netbeans, then from “File” menu > “Open project” > [path.to/]timu_learner.  From “Run” menu > “Clean and build project”.
 Code is organized in two packages in the following fashion.
@@ -40,7 +44,7 @@ my.clust    clustering algorithms
 my.f        generic helper methods for different datatypes and lists
 ```
 
-Data is organized into the following classes.
+Dataset data is organized in the following classes.
 
 ```
 *Class*
