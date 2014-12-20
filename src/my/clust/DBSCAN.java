@@ -136,6 +136,8 @@ public class DBSCAN {
     /** Bonus: finding an Eps, based on inter-item k-distances over a dataset. 
      *  This is experimental.
      * 
+     *  k is taken as minPts - 1
+     * 
      *  The idea is to find an Eps that will leave noise points outside clusters.
      * 
      *  Returns one of computed k-distances. A k-distance means the
@@ -154,9 +156,11 @@ public class DBSCAN {
      *  Note: if the dataset is very small, this resorts to returning
      *  an average over the measured k-distances.
      */
-    public double suggestEps(int k, Dataset ds, ProximityMeasure m, List<AttrProxMetric> metrics) {
+    public double suggestEps(int minPts, Dataset ds, ProximityMeasure m, List<AttrProxMetric> metrics) {
 
         checkClassAttribute(ds);
+        
+        int k = minPts - 1;
         
         double[] y1 = Dist.kdistance(1, ds, m, metrics);
         double[] y = Dist.kdistance(k, ds, m, metrics);
