@@ -55,6 +55,15 @@ public class DBSCAN {
             }
             return res;
         }
+        
+        public String toString() {
+            Item[][] cl = getClusters();
+            StringBuilder s = new StringBuilder();
+            s.append("clusters: " + cl.length + "\n");
+            for(Item[] clust : cl)
+                s.append("  ").append(Arrays.toString(clust)).append("\n");
+            return s.toString();
+        }
     }
     
     public DBSCANResult dbscan(Dataset ds, int minPts, double Eps, ProximityMeasure m, List<AttrProxMetric> metrics) {
