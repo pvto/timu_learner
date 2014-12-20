@@ -25,7 +25,7 @@ public class Knn {
 
     public KnnResult knn(Item sample, Dataset data, int n, ProximityMeasure m, Voting v) {
         List<Item> copy = new ArrayList<>(data.items);
-        List<AttrProxMetric> metrics = ProximityMeasure.metrics.forDs(data);
+        List<AttrProxMetric> metrics = AttrProxMetric.metrics.forDs(data);
         Collections.sort(copy, new Dataset.ItemDistComparator(sample, m, metrics, data));
         copy = copy.subList(0, n);
         KnnResult res = voteKnnResult(copy, sample, data, m, metrics, v);

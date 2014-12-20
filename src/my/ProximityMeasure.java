@@ -216,36 +216,6 @@ public interface ProximityMeasure {
     };
     
     
-    static public class metrics {
-
-        static public List<AttrProxMetric> forDs(Dataset ds) {
-            int n = Dataset.attributeCount(ds);
-            int resolved = 0;
-            AttrProxMetric[] ms = new AttrProxMetric[n];
-            Item item = ds.items.get(0);
-            for (int i = 0; i < n; i++) {
-                if (ms[i] != null) {
-                    continue;
-                }
-                Class clz = item.attributes.get(i).getClass();
-                if (i == ds.classAttribute) {
-                    ms[i] = DoNotMeasureMetric;
-                } else if (clz == Attribute.DAttribute.class) {
-                    ms[i] = DMetric;
-                } else if (Attribute.BIAttribute.class.isAssignableFrom(clz)) {
-                    ms[i] = BIMetric;
-                } else if (Attribute.BSAttribute.class.isAssignableFrom(clz)) {
-                    ms[i] = BSMetric;
-                } else {
-                    continue;
-                }
-                if (++resolved == n) {
-                    break;
-                }
-            }
-            return Arrays.asList(ms);
-        }
-    }
 
     /**
      * a validity check for items

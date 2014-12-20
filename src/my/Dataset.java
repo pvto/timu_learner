@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Set;
 import my.Attribute.BIAttribute;
 import my.Attribute.DAttribute;
+import my.f.Dist;
 
 public class Dataset {
     public List<Item> items = new ArrayList<>();
@@ -205,17 +206,7 @@ public class Dataset {
     
     
     static public double[][] distances(Dataset ds, ProximityMeasure m, List<AttrProxMetric> metrics) {
-        if (metrics == null) {
-            metrics = ProximityMeasure.metrics.forDs(ds);
-        }
-        double[][] dist = new double[ds.size()][ds.size()];
-        for(int i = 0; i < ds.size(); i++) {
-            for(int j = i + 1; j < ds.size(); j++) {
-                dist[j][i] = dist[i][j] = m.distance(metrics, ds.item(i), ds.item(j), ds);
-            }
-            dist[i][i] = 0.0;
-        }
-        return dist;
+        return Dist.distances(ds, m, metrics);
     }
 
     static public class ItemDistComparator implements Comparator<Item> {

@@ -4,6 +4,7 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import my.AttrProxMetric;
 import my.Attribute;
 import my.Attribute.DAttribute;
@@ -16,6 +17,7 @@ import my.f.Int;
 import my.plot.Cout;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 public class DBSCANTest {
     
@@ -34,6 +36,7 @@ String euclData =
 "7,0\n7,1\n"
 ;
     Dataset eds = new Csv().from(new StringReader(euclData), ",");
+    { eds.classAttribute = Dataset.UNSUPERVISED; }
     DBSCAN dbscan = new DBSCAN();
     
 
@@ -81,17 +84,21 @@ String laby =
         int i = 0;
         for(String s : laby.split(" ")) {
             for(int j = 0; j < s.length(); j++) {
-                if (s.charAt(j) == 'z')
-                    intermed.append(i+","+j+"\n");
+                if (s.charAt(j) == 'z') {
+                    double  x = i + Math.random() * 0.1,
+                            y = j + Math.random() * 0.1;
+                    intermed.append(String.format(Locale.ENGLISH, "%.2f,%.2f\n", x, y));
+                }
             }
             i++;
         }
         lds = new Csv().from(new StringReader(intermed.toString()), ",");
+        lds.classAttribute = Dataset.UNSUPERVISED;
     }
     
     @Test
     public void testManh() {
-        DBSCAN.DBSCANResult res = dbscan.dbscan(lds, 2, 0.5, ProximityMeasure.Manhattan, null);
+        DBSCAN.DBSCANResult res = dbscan.dbscan(lds, 2, 0.6, ProximityMeasure.Manhattan, null);
         Item[][] clust = res.getClusters();
         Cout.plot(System.out, lds.column(1), lds.column(0), Attr.icol(res.clusterings));
         assertEquals(3, clust.length);
@@ -105,7 +112,8 @@ String words =
 "OUTLIER"
 ;
     Dataset wds = new Csv().from(new StringReader(words), ",");
-    List<AttrProxMetric> wapm = ProximityMeasure.metrics.forDs(wds);
+    { wds.classAttribute = Dataset.UNSUPERVISED; }
+    List<AttrProxMetric> wapm = AttrProxMetric.metrics.forDs(wds);
     {
         wapm.set(0, AttrProxMetric.Levenshtein);
     }
@@ -129,10 +137,22 @@ String words =
         }
     }
     
+    @Ignore
     @Test
     public void testBig() {
         DBSCAN.DBSCANResult res = dbscan.dbscan(pds, 10, 0.01, ProximityMeasure.Euclidean, null);
         Item[][] clu = res.getClusters();
         assertTrue(clu.length > 1);
+    }
+    
+    
+    
+    @Test
+    public void testSuggestEps() {
+        
+        double sugg = dbscan.suggestEps(2, lds, ProximityMeasure.Manhattan, null);
+        System.out.println("suggested Eps: " + sugg);
+        assertTrue(sugg > 0.5);
+        
     }
 }

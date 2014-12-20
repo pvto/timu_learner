@@ -1,5 +1,7 @@
 package my;
 
+import java.util.Arrays;
+import java.util.List;
 import static my.Attribute.MISSING;
 import my.f.Dist;
 
@@ -13,7 +15,36 @@ public interface AttrProxMetric {
 
 
         
+    static public final class metrics {
         
+        static public List<AttrProxMetric> forDs(Dataset ds) {
+            int n = Dataset.attributeCount(ds);
+            int resolved = 0;
+            AttrProxMetric[] ms = new AttrProxMetric[n];
+            Item item = ds.items.get(0);
+            for (int i = 0; i < n; i++) {
+                if (ms[i] != null) {
+                    continue;
+                }
+                Class clz = item.attributes.get(i).getClass();
+                if (i == ds.classAttribute) {
+                    ms[i] = DoNotMeasureMetric;
+                } else if (clz == Attribute.DAttribute.class) {
+                    ms[i] = DMetric;
+                } else if (Attribute.BIAttribute.class.isAssignableFrom(clz)) {
+                    ms[i] = BIMetric;
+                } else if (Attribute.BSAttribute.class.isAssignableFrom(clz)) {
+                    ms[i] = BSMetric;
+                } else {
+                    continue;
+                }
+                if (++resolved == n) {
+                    break;
+                }
+            }
+            return Arrays.asList(ms);
+        }
+    }
 
     static final public AttrProxMetric DoNotMeasureMetric = new AttrProxMetric() {
         @Override
