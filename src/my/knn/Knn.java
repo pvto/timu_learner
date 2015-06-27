@@ -11,6 +11,7 @@ import my.Dataset;
 import my.ProximityMeasure;
 import my.Item;
 import my.Voting;
+import my.f.Int;
 
 public class Knn {
 
@@ -63,19 +64,25 @@ public class Knn {
             default:
                 throw new UnsupportedOperationException("Voting " + v + " not supported by algorithm");
         }
-        Entry<Attribute, Double> winner = null;
+        List<Entry<Attribute, Double>> winners = new ArrayList<>();
         for (Entry<Attribute, Double> e : counts.entrySet()) {
-            if (winner == null || 
-                    (smallerBetter ? winner.getValue() < e.getValue() 
-                    : winner.getValue() > e.getValue())) {
-                winner = e;
-                // this deterministically chooses first equal-item in case of conflict, but
-                // in an ideal implementation, one should be picked evenly from the distribution
-                // ...would require an intermediate winner-list and a dice...
+            if (winners.isEmpty() || 
+                    (smallerBetter ? winners.get(0).getValue() < e.getValue() 
+                    : winners.get(0).getValue() > e.getValue())) {
+                winners.clear();
+                winners.add(e);
+            }
+            else if (!winners.isEmpty() 
+                    && winners.get(0).getValue() == e.getValue()) {
+                winners.add(e);
             }
         }
+        if (winners.size() > 0) {
+            int offset = Int.irand(winners.size());
+            winners.set(0, winners.get(offset));
+        }
         KnnResult res = new KnnResult();
-        res.predictedClass = winner.getKey();
+        res.predictedClass = winners.get(0).getKey();
         res.nearestNeighbours = copy;
         return res;
     }

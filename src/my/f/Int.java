@@ -59,4 +59,9 @@ public class Int {
         }
         return res;
     }
+    
+    static public int irand(int width) {
+        double rnd = Math.random();
+        return (int)(rnd * width);
+    }
 }
