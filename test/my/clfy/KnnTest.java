@@ -1,5 +1,6 @@
-package my.knn;
+package my.clfy;
 
+import my.clfy.Knn;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.StringReader;

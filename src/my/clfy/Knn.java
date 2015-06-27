@@ -1,4 +1,4 @@
-package my.knn;
+package my.clfy;
 
 import java.util.ArrayList;
 import java.util.Collections;
