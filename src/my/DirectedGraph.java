@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A directed graph mapped over continuous n-dim spaces.
+ * A directed graph containing nodes that could be
+ * mapped over continuous n-dim spaces.
  * 
  * @author pvto https://github.com/pvto
  */
@@ -20,10 +21,11 @@ public class DirectedGraph {
     (x,y,)               (x,y,)
 */
     
-    public interface Node {
+    public interface Node<T> {
         
         double dimensionPos(int dimension);
         int dimensions();
+        T getContent();
     }
     
     public interface NodeDist {
@@ -49,7 +51,7 @@ public class DirectedGraph {
     
     public static Node NODE0 = new NodeDN(0);
     
-    public static class NodeD2 implements Node {
+    public static class NodeD2<T> implements Node {
         
         public final double[] dims = {0,0};
         
@@ -69,11 +71,16 @@ public class DirectedGraph {
         public String toString() {
             return "(" + dims[0] + "," + dims[1] + ")";
         }
+
+        @Override
+        public T getContent() {
+            throw new UnsupportedOperationException("Implement me.");
+        }
         
     }
 
     
-    public static class NodeDN implements Node {
+    public static class NodeDN<T> implements Node {
         
         public final double[] dims;
         
@@ -89,6 +96,11 @@ public class DirectedGraph {
 
         public NodeDN(int n) {
             dims = new double[n];
+        }
+        
+        @Override
+        public T getContent() {
+            throw new UnsupportedOperationException("Implement me.");
         }
     }
 
@@ -129,37 +141,36 @@ public class DirectedGraph {
     
 
     
-    public static List<Vertex> constructGraph(String map2d)
-    {
-        String[] rows = map2d.split("\r?\n");
+    public static List<Vertex> constructGraph(String[] map2d) {
+        
+        String[] rows = map2d;
         List<Vertex> ret = new ArrayList<>();
-        for(int j = 0; j < rows.length; j++)
-        {
+        for(int j = 0; j < rows.length; j++) {
+            
             String row = rows[j];
-            for (int i = 0; i < row.length(); i++)
-            {
+            for (int i = 0; i < row.length(); i++) {
+                
                 Vertex v = new Vertex();
                 ret.add(v);
-                if (row.charAt(i) == '#')
-                {
+                if (row.charAt(i) == '#') {
                     v.node = NODE0;
                     continue;
                 }
                 v.node = new NodeD2( i,j );
-                if (i > 0)
-                {
+                if (i > 0) {
+                    
                     Vertex prev = ret.get(ret.size() - 2);
-                    if (prev.node.dimensions() > 0 && v.node.dimensions() > 0)
-                    {
+                    if (prev.node.dimensions() > 0 && v.node.dimensions() > 0) {
+                        
                         prev.edges.add(new Edge(v));
                         v.edges.add(new Edge(prev));
                     }
                 }
-                if (j > 0)
-                {
+                if (j > 0) {
+                    
                     Vertex prev = ret.get(ret.size() - 1 - row.length());
-                    if (prev.node.dimensions() > 0 && v.node.dimensions() > 0)
-                    {
+                    if (prev.node.dimensions() > 0 && v.node.dimensions() > 0) {
+                        
                         prev.edges.add(new Edge(v));
                         v.edges.add(new Edge(prev));
                     }

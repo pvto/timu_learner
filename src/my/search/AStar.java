@@ -3,7 +3,6 @@ package my.search;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import my.DirectedGraph;
 import my.DirectedGraph.Edge;
 import my.DirectedGraph.Vertex;
 import static my.DirectedGraph.getConnectingEdges;
@@ -16,22 +15,18 @@ public class AStar {
 
     
     
-    public List<Edge> astar(Vertex start, Vertex end, F1D<Vertex> f)
-    {
+    public List<Edge> astar(Vertex start, Vertex end, F1D<Vertex> f) {
+        
         List<Vertex> stack = new ArrayList<>();
         Vertex cur = start;
-        for(;;)
-        {
+        while(cur != end) {
+            
             cur.dirty++;
-            if (cur == end)
-            {
-                break;
-            }
             double best = Double.MAX_VALUE;
             int bestInd = -1;
             
-            for(int i = 0; i < cur.edges.size(); i++)
-            {
+            for(int i = 0; i < cur.edges.size(); i++) {
+                
                 Vertex may = cur.edges.get(i).target;
                 if (may.dirty > 0)
                     continue;
@@ -42,21 +37,21 @@ public class AStar {
                     bestInd = i;
                 }
             }
-            if (bestInd == -1)
-            {
+            if (bestInd == -1) {
+                
                 if (stack.isEmpty())
                     return Collections.EMPTY_LIST;
                 best = Double.MAX_VALUE;
-                for(int i = 0; i < stack.size(); i++)
-                {
+                for(int i = 0; i < stack.size(); i++) {
+                    
                     Vertex stc = stack.get(i);
                     if (f.eval(stc) < best)
                         bestInd = i;
                 }
                 cur = stack.remove(bestInd);
             }
-            else 
-            {
+            else {
+                
                 stack.add(cur);
                 cur = cur.edges.get(bestInd).target;
             }

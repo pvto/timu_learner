@@ -24,7 +24,7 @@ public class AStarTest {
     @Test
     public void testConstructGraph()
     {
-        List<Vertex> list = DirectedGraph.constructGraph(map);
+        List<Vertex> list = DirectedGraph.constructGraph(map.split("\r?\n"));
         assertEquals(7 * 9, list.size());
         assertEquals(list.get(11), list.get(10).edges.get(0).target);
         assertEquals(list.get(19), list.get(10).edges.get(1).target);
@@ -33,7 +33,7 @@ public class AStarTest {
     @Test
     public void testGetConnectingEdges()
     {
-        List<Vertex> list = DirectedGraph.constructGraph(map);
+        List<Vertex> list = DirectedGraph.constructGraph(map.split("\r?\n"));
         List<Vertex> path = new ArrayList<>();
         for(Integer i : new int[]{10,11,12,21,30})
             path.add(list.get(i));
@@ -45,7 +45,7 @@ public class AStarTest {
     @Test
     public void testAstar()
     {
-        List<Vertex> list = DirectedGraph.constructGraph(map);
+        List<Vertex> list = DirectedGraph.constructGraph(map.split("\r?\n"));
         Vertex start = list.get(10);
         final Vertex end = list.get(16);
         assertEquals(1, end.edges.size());
@@ -85,7 +85,7 @@ String map2 =
     @Test
     public void testLaby()
     {
-        List<Vertex> list = DirectedGraph.constructGraph(map2);
+        List<Vertex> list = DirectedGraph.constructGraph(map2.split("\r?\n"));
         Vertex start = list.get(36);
         final Vertex end = list.get(68);
         assertEquals(1, end.edges.size());
