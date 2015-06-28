@@ -6,6 +6,9 @@ import java.util.List;
 import my.AttrProxMetric;
 import my.Dataset;
 import my.ProximityMeasure;
+import static my.clust.Clustering.NOISE;
+import static my.clust.Clustering.UNCLUSTERED;
+import static my.clust.Clustering.checkClassAttribute;
 import my.f.Dist;
 import my.f.Doub;
 import my.f.Int;
@@ -15,16 +18,6 @@ import my.f.Int;
  */
 public class DBSCAN {
     
-    static public int 
-            NOISE = -1,
-            UNCLUSTERED = -2
-            ;
-
-    private void checkClassAttribute(Dataset ds) {
-        if (ds.classAttribute != Dataset.UNSUPERVISED)
-            throw new IllegalArgumentException("DBSCAN requires an unsupervised dataset; please set dataset.classAttribute = Dataset.UNSUPERVISED");
-    }
-
 
     
     public Clustering dbscan(Dataset ds, int minPts, double Eps, ProximityMeasure m, List<AttrProxMetric> metrics) {
@@ -48,6 +41,7 @@ public class DBSCAN {
         // start the main algorithm
         int currCluster = 0;
         int[] clusterings = res.clusterings;
+        int[] modes = res.itemModes;
         for(Integer off : rndord) {
             if (clusterings[off] != UNCLUSTERED) { }
             else if (nbsize[off] == 1) {
@@ -55,7 +49,7 @@ public class DBSCAN {
                 clusterings[off] = NOISE;
             }
             else if (nbsize[off] >= minPts) {
-                scanCluster(off, currCluster, dist, minPts, Eps, clusterings, nbsize);
+                scanCluster(off, currCluster, dist, minPts, Eps, clusterings, nbsize, modes);
                 currCluster++;
             }
         }
@@ -67,15 +61,21 @@ public class DBSCAN {
         }
         return res;
     }
+    
+    
 
-    private void scanCluster(int item, int currCluster, double[][] dist, int minPts, double Eps, int[] clusterings, int[] nbsize) {
+    private void scanCluster(int item, int currCluster, double[][] dist, 
+                            int minPts, double Eps, int[] clusterings, int[] nbsize, int[] modes) {
+        
         clusterings[item] = currCluster;
+        modes[item] = Clustering.MODE_CORE;
+        
         double[] di = dist[item];
         for(int i = 0; i < di.length; i++) {
             if (clusterings[i] != UNCLUSTERED) { continue; }
             else if (di[i] <= Eps) {
                 if (nbsize[i] >= minPts) {
-                    scanCluster(i, currCluster, dist, minPts, Eps, clusterings, nbsize);
+                    scanCluster(i, currCluster, dist, minPts, Eps, clusterings, nbsize, modes);
                 } else {
                     clusterings[i] = currCluster;
                 }
