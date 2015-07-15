@@ -43,11 +43,11 @@ String euclData =
     @Test
     public void testEucl() {
         
-        DBSCAN.DBSCANResult res = dbscan.dbscan(eds, 3, Math.sqrt(2.0), ProximityMeasure.Euclidean, null);
+        Clustering res = dbscan.dbscan(eds, 3, Math.sqrt(2.0), ProximityMeasure.Euclidean, null);
         List<Integer> clusterInds = Int.uniq(res.clusterings);
         assertEquals(3, clusterInds.size());
 
-        int target = DBSCAN.NOISE,
+        int target = Clustering.NOISE,
                 count = 0;
         for(int i = 0; i < res.clusterings.length; i++) {
             if (res.clusterings[i] == target) { count++; }
@@ -98,7 +98,7 @@ String laby =
     
     @Test
     public void testManh() {
-        DBSCAN.DBSCANResult res = dbscan.dbscan(lds, 2, 0.6, ProximityMeasure.Manhattan, null);
+        Clustering res = dbscan.dbscan(lds, 2, 0.6, ProximityMeasure.Manhattan, null);
         Item[][] clust = res.getClusters();
         Cout.plot(System.out, lds.column(1), lds.column(0), Attr.icol(res.clusterings));
         assertEquals(3, clust.length);
@@ -119,7 +119,7 @@ String words =
     }
     @Test
     public void testLevenshtein() {
-        DBSCAN.DBSCANResult res = dbscan.dbscan(wds, 2, 1.0, ProximityMeasure.Manhattan, wapm);
+        Clustering res = dbscan.dbscan(wds, 2, 1.0, ProximityMeasure.Manhattan, wapm);
         System.out.println(Arrays.toString(res.clusterings));
         assertEquals(3, res.getClusters().length);
     }
@@ -140,7 +140,7 @@ String words =
     @Ignore
     @Test
     public void testBig() {
-        DBSCAN.DBSCANResult res = dbscan.dbscan(pds, 10, 0.01, ProximityMeasure.Euclidean, null);
+        Clustering res = dbscan.dbscan(pds, 10, 0.01, ProximityMeasure.Euclidean, null);
         Item[][] clu = res.getClusters();
         assertTrue(clu.length > 1);
     }
