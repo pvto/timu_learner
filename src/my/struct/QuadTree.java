@@ -65,8 +65,16 @@ public class QuadTree<T> {
             this.x2 = x2;  this.y2 = y2;
         }
         
-        public CoordHolder place(double x, double y, T o, int n)
+        public CoordHolder place(double x, double y, T o)
         {
+            return place(new CoordHolder(x, y, o, null), 0);
+        }
+        
+        public CoordHolder place(CoordHolder h, int n)
+        {
+            double x = h.x,  
+                    y = h.y
+                    ;
             if (x < x1 || y < y1 || x > x2 || y > y2) {
                 if (x1 == x2)
                 {
@@ -82,7 +90,7 @@ public class QuadTree<T> {
                     {
                         initParent(x, y);
                     }
-                    return parent.place(x, y, o, n+1);
+                    return parent.place(h, n+1);
                 }
             }
             if (items.size() == LEAF_MAX_OBJECTS)
@@ -91,30 +99,30 @@ public class QuadTree<T> {
             }
             if (UL != null)
             {
-                return place_(x, y, o, this, n+1);
+                return place_(h, this, n+1);
             }
             else
             {
-                CoordHolder h = new CoordHolder(x, y, o, this);
+                h.quad = this;
                 items.add(h);
                 return h;
             }
         }
         
-        private CoordHolder place_(double x, double y, T o, Quad quad, int n)
+        private CoordHolder place_(CoordHolder h, Quad quad, int n)
         {
             while (quad.UL != null)
             {
-                if (x <= (quad.x2 + quad.x1) / 2)
+                if (h.x <= (quad.x2 + quad.x1) / 2)
                 {
-                    quad = (y <= (quad.y2 + quad.y1) / 2 ? quad.UL : quad.LL);
+                    quad = (h.y <= (quad.y2 + quad.y1) / 2 ? quad.UL : quad.LL);
                 }
                 else
                 {
-                    quad = (y <= (quad.y2 + quad.y1) / 2 ? quad.UR : quad.LR);
+                    quad = (h.y <= (quad.y2 + quad.y1) / 2 ? quad.UR : quad.LR);
                 }
             }
-            return quad.place(x, y, o, n+1);
+            return quad.place(h, n+1);
         }
         
         private void expand(int n)
@@ -125,7 +133,7 @@ public class QuadTree<T> {
             }
             for(CoordHolder c : items)
             {
-                place_(c.x, c.y, c.o, this, n+1);
+                place_(c, this, n+1);
             }
             items = Collections.EMPTY_LIST;
         }
@@ -180,7 +188,7 @@ public class QuadTree<T> {
                 {
                     initParent(item.x, item.y);
                 }
-                parent.place(item.x, item.y, item.o, n+1);
+                parent.place(item, n+1);
             }
         }
         
@@ -230,7 +238,7 @@ public class QuadTree<T> {
         {
             root = new Quad(null, x, y, x, y);
         }
-        CoordHolder h = root.place(x, y, o, 0);
+        CoordHolder h = root.place(x, y, o);
         size++;
         if (DYNAMIC_MAX_OBJECTS && size % 100 == 0)
         {
