@@ -1,5 +1,6 @@
 package my.struct;
 
+import java.util.List;
 import my.struct.QuadTree.CoordHolder;
 import my.struct.QuadTree.Quad;
 import org.junit.Test;
@@ -37,32 +38,45 @@ public class QuadTreeTest {
         ch.x -= 0.5;
         ch.replace();
         assertEquals(1, quad.items.size());
-        assertNotNull(quad.parent.parent.parent);
-
+        assertNotNull(quad.parent.parent.parent);   // tree has grown
+        assertNull(quad.parent.parent.parent.parent);
+        assertNotNull(q.root.UL);
+        assertNotNull(q.root.UL.parent);
+        assertNull(q.root.UL.parent.parent);
+        assertEquals(2, q.root.UL.items.get(0).depth());
+        assertEquals(4, q.root.UR.UL.UL.items.get(0).depth());
+        
         //q.print(System.out);
+        assertEquals(2, q.findAll(0.0, 0.0, 1.0, 1.0).size());
     }
     
-    @Test public void testBig10_0() { testBig(10, 0); }
-    @Test public void testBig10_1() { testBig(10, 0); }
-    @Test public void testBig10_2() { testBig(10, 0); }
-    @Test public void testBig10D_0() { testBig(10, 1); }
-    @Test public void testBig10D_1() { testBig(10, 1); }
-    @Test public void testBig10D_2() { testBig(10, 1); }
-    @Test public void testBig100_0() { testBig(100, 0); }
-    @Test public void testBig100_1() { testBig(100, 0); }
-    @Test public void testBig100_2() { testBig(100, 0); }
-    @Test public void testBig1000_0() { testBig(1000, 0); }
-    @Test public void testBig1000_1() { testBig(1000, 0); }
-    @Test public void testBig1000_2() { testBig(1000, 0); }
+    int BIG = 1000; // 1000000
+    @Test public void testBig10_0() { testBig(BIG, 10, 0); }
+    @Test public void testBig10_1() { testBig(BIG, 10, 0); }
+    @Test public void testBig10_2() { testBig(BIG, 10, 0); }
+    @Test public void testBig10D_0() { testBig(BIG, 10, 1); }
+    @Test public void testBig10D_1() { testBig(BIG, 10, 1); }
+    @Test public void testBig10D_2() { testBig(BIG, 10, 1); }
+    @Test public void testBig100_0() { testBig(BIG, 100, 0); }
+    @Test public void testBig100_1() { testBig(BIG, 100, 0); }
+    @Test public void testBig100_2() { testBig(BIG, 100, 0); }
+    @Test public void testBig1000_0() { testBig(BIG, 1000, 0); }
+    @Test public void testBig1000_1() { testBig(BIG, 1000, 0); }
+    @Test public void testBig1000_2() { testBig(BIG, 1000, 0); }
     
-    public void testBig(int MAX, int DYNAMIC)
+    public QuadTree<Integer> testBig(int n, int MAX, int DYNAMIC) 
+    {
+        return testBig(n, MAX, DYNAMIC, 0.333333);
+    }
+    public QuadTree<Integer> testBig(int n, int MAX, int DYNAMIC, double EXP)
     {
         long time = System.currentTimeMillis();
         QuadTree<Integer> q = new QuadTree<>();
         q.LEAF_MAX_OBJECTS = MAX;
         if (DYNAMIC > 0)
             q.DYNAMIC_MAX_OBJECTS = true;
-        for(int i = 0; i < 1000000; i++)
+        q.MAX_OBJ_TARGET_EXPONENT = EXP;
+        for(int i = 0; i < n; i++)
         {
             q.place(Math.round(Math.random()*1000), Math.round(Math.random()*1000), i);
         }
@@ -70,5 +84,47 @@ public class QuadTreeTest {
         System.out.println(passed + " ms, MAX="+MAX+",DYN="+DYNAMIC);
         if (q.size() < 20)
             q.print(System.out);
+        return q;
+    }
+    
+//    @Test
+    public void testDepth1000D()
+    {
+        printDepth(1000000, 10, 1, 0.333333);
+        printDepth(100000, 10, 1, 0.333333);
+        printDepth(10000, 10, 1, 0.333333);
+        printDepth(1000, 10, 1, 0.333333);
+        
+        printDepth(1000000, 10, 1, 0.5);
+        printDepth(100000, 10, 1, 0.5);
+        printDepth(10000, 10, 1, 0.5);
+        printDepth(1000, 10, 1, 0.5);
+
+        printDepth(1000000, 1000, 0, 0.5);
+        printDepth(100000, 1000, 0, 0.5);
+        printDepth(10000, 1000, 0, 0.5);
+        printDepth(1000, 1000, 0, 0.5);
+
+        printDepth(1000000, 100, 0, 0.5);
+        printDepth(100000, 100, 0, 0.5);
+        printDepth(10000, 100, 0, 0.5);
+        printDepth(1000, 100, 0, 0.5);
+        
+        printDepth(1000000, 10, 0, 0.5);
+        printDepth(100000, 10, 0, 0.5);
+        printDepth(10000, 10, 0, 0.5);
+        printDepth(1000, 10, 0, 0.5);
+        
+    }
+    private void printDepth(int n, int MAX, int DYNAMIC, double EXP)
+    {
+        QuadTree<Integer> q = testBig(n, MAX, DYNAMIC, EXP);
+        List<QuadTree<Integer>.CoordHolder> all 
+                = q.findAll(q.root.x1, q.root.y1, q.root.x2, q.root.y2);
+        CountingSet<Integer> counts = new CountingSet<>();
+        for(CoordHolder h : all)
+            counts.increment(h.depth(), 1.0);
+        System.out.println((DYNAMIC==0?"STAT":"DYN")+","+n+","+MAX+","+EXP+"," + counts);
+        
     }
 }

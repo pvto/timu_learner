@@ -2,6 +2,7 @@
 package my.struct;
 
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -40,6 +41,22 @@ public class QuadTree<T> {
         {
             quad.replace(this, 0);
         }
+        public void remove()
+        {
+            if (quad.items.remove(this))
+                size--;
+        }
+        public int depth()
+        {
+            int i = 0;
+            Quad q = this.quad;
+            while(q != null)
+            {
+                i++;
+                q = q.parent;
+            }
+            return i;
+        }
     }
     
     
@@ -63,6 +80,27 @@ public class QuadTree<T> {
             this.parent = parent;
             this.x1 = x1;  this.y1 = y1;
             this.x2 = x2;  this.y2 = y2;
+        }
+        
+        public void findAll(double X1, double Y1, double X2, double Y2, List<CoordHolder> ret)
+        {
+            if (UL == null)
+            {
+                for(CoordHolder h : items)
+                    if (h.x >= X1 && h.y >= Y1 && h.x <= X2 && h.y <= Y2)
+                        ret.add(h);
+                return;
+            }
+            if (overlap(UL, X1, Y1, X2, Y2)) UL.findAll(X1, Y1, X2, Y2, ret);
+            if (overlap(UR, X1, Y1, X2, Y2)) UR.findAll(X1, Y1, X2, Y2, ret);
+            if (overlap(LL, X1, Y1, X2, Y2)) LL.findAll(X1, Y1, X2, Y2, ret);
+            if (overlap(LR, X1, Y1, X2, Y2)) LR.findAll(X1, Y1, X2, Y2, ret);
+        }
+        
+        private boolean overlap(Quad q, double X1, double Y1, double X2, double Y2)
+        {
+            if (q.x2 < X1 || q.y2 < Y1 || q.x1 > X2 || q.y1 > Y2) return false;
+            return true;
         }
         
         public CoordHolder place(double x, double y, T o)
@@ -231,6 +269,13 @@ public class QuadTree<T> {
     }
     
     public Quad root;
+    
+    public List<CoordHolder> findAll(double x1, double y1, double x2, double y2)
+    {
+        List<CoordHolder> ret = new ArrayList<CoordHolder>();
+        root.findAll(x1, y1, x2, y2, ret);
+        return ret;
+    }
     
     public CoordHolder place(double x, double y, T o)
     {
