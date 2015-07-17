@@ -2,7 +2,6 @@ package my.clfy;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import my.Attribute;
@@ -12,6 +11,7 @@ import my.ProximityMeasure;
 import my.Item;
 import my.Voting;
 import my.f.Int;
+import my.struct.CountingSet;
 
 public class Knn {
 
@@ -86,25 +86,6 @@ public class Knn {
         res.nearestNeighbours = copy;
         return res;
     }
-
-    
-    static private class CountingSet<K> extends HashMap<K, Double> {
-
-        public Double increment(K key, double amount) {
-            Double d = getCount(key);
-            put(key, (d = d + amount));
-            return d;
-        }
-        
-        public double getCount(K key) {
-            Double d = get(key);
-            if (d == null) {
-                return 0.0;
-            }
-            return d;
-        }
-    }
-    
 
     
 }
