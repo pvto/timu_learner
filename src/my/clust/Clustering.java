@@ -1,9 +1,12 @@
 
 package my.clust;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import my.Dataset;
 import my.Item;
+import my.Ples.Tuple;
 import my.f.Int;
 
 /**
@@ -37,7 +40,7 @@ public class Clustering {
         clusterings = new int[ds.size()];
         itemModes = new int[ds.size()];
         Arrays.fill(clusterings, UNCLUSTERED);
-        Arrays.fill(clusterings, MODE_DEFAULT);
+        Arrays.fill(itemModes, MODE_DEFAULT);
     }
     public Dataset ds;
     public double[][] dist;
@@ -85,9 +88,45 @@ public class Clustering {
     
     public static class Splitter {
         
-        public static Clustering split(Clustering clustering, int maxCorePoints, int minCorePoints) {
+        public static Clustering split(Clustering clustering, int maxCorePoints, int minCorePoints, int minPoints) {
             Clustering ret = new Clustering(clustering.ds);
-            //TODO
+//            Item[][] clusters = clustering.getClusters();
+//            boolean firstNoiseCluster = Int.min(clustering.clusterings) == NOISE;
+//            int start = firstNoiseCluster ? 1 : 0;
+//            for (int i = start; i < clusters.length; i++) {
+//                Item[] cluster = clusters[i];
+//                
+//                
+//            }
+            int cmax = Int.max(clustering.clusterings),
+                cmin = Int.min(clustering.clusterings),
+                clusters = cmax - cmin + 1;
+            Item[][] res = new Item[clusters][];
+            List<List<Tuple<Item,Integer>>> re = new ArrayList<>();
+
+            for(int clust = cmin; 
+                    clust <= cmax; clust++) {
+                int count = Int.count(clustering.clusterings, clust);
+                List<Tuple<Item,Integer>> items = new ArrayList<>();
+                int 
+                        j = 0,
+                        nCore = 0
+                        ;
+                for(int i = 0; i < clustering.clusterings.length; i++) {
+
+                    int CLU = clustering.clusterings[i];
+                    if (CLU != clust) { continue; }
+                    if (CLU == NOISE && minPoints > 1) { continue; }
+                    items.add(new Tuple(clustering.ds.item(i), i));
+                    if (clustering.itemModes[i] == MODE_CORE)
+                        nCore++;
+                }
+                if (nCore < minCorePoints)
+                    continue;
+                if (nCore > maxCorePoints) {
+                    
+                }
+            }
             return ret;
         }
     }

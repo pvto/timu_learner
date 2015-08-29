@@ -120,7 +120,7 @@ String words =
     @Test
     public void testLevenshtein() {
         Clustering res = dbscan.dbscan(wds, 2, 1.0, ProximityMeasure.Manhattan, wapm);
-        System.out.println(Arrays.toString(res.clusterings));
+        System.out.println(res);
         assertEquals(3, res.getClusters().length);
     }
     

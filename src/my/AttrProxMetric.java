@@ -134,4 +134,20 @@ public interface AttrProxMetric {
         
     };
 
+    static final public AttrProxMetric StringOne = new AttrProxMetric() {
+
+        @Override
+        public double difference(Attribute a, Attribute b) {
+            if (a == MISSING || b == MISSING) {
+                return 1000.0;  //find a better value
+            }
+            else if (a == b) {
+                return 0.0;
+            }
+            String A = ((Attribute.BSAttribute)a).value;
+            String B = ((Attribute.BSAttribute)b).value;
+            return Dist.stringOnedistance(A, B);
+        }
+        
+    };
 }

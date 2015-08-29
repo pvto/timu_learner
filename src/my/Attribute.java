@@ -11,10 +11,10 @@ public interface Attribute extends Comparable {
                 tSTR =       4|8
                 ;
         static public int type(Attribute a) {
-            if (a instanceof Attribute.BIAttribute) {          return tBININT; } 
-            else if (a instanceof Attribute.IAttribute) {      return tINT; } 
-            else if (a instanceof Attribute.BSAttribute) {     return tBINSTR; } 
+            if (a instanceof Attribute.IAttribute) {      return tINT; } 
+            else if (a instanceof Attribute.BIAttribute) {          return tBININT; } 
             else if (a instanceof Attribute.SAttribute) {      return tSTR; }
+            else if (a instanceof Attribute.BSAttribute) {     return tBINSTR; } 
             else return 0;
         }
         static public boolean isd(Attribute a) { return a instanceof DAttribute; }

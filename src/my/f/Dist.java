@@ -47,12 +47,52 @@ public class Dist {
 
     }
 
-    
+
+    static public double stringOnedistance(String s, String t) {
+
+        double ret = 0;
+        int
+                i = 1,
+                j = 1
+                ;
+        while(i <= s.length() || j <= t.length()) {
+            if (i-1 >= s.length()) {
+                j++;
+                ret += 1;
+            }
+            else if (j-1 >= t.length()) {
+                i++;
+                ret += 1;
+            }
+            else if (s.charAt(i-1) == t.charAt(j-1)) {
+                i++;  j++;
+            }
+            else if (i < s.length() && j-1 < t.length() && s.charAt(i) == t.charAt(j-1)) {
+                ret += 1;
+                i += 2;
+                j += 1;
+            }
+            else if (i-1 < s.length() && j < t.length() && s.charAt(i-1) == t.charAt(j)) {
+                ret += 1;
+                i += 1;
+                j += 2;
+            }
+            else {
+                ret += 1;
+                i++;  j++;
+                if (i > s.length()) i = s.length() + 1;
+                if (j > t.length()) j = t.length() + 1;
+            }
+        }
+        return ret;
+    }
+
+
     static public double[] kdistance(int k, Dataset ds, ProximityMeasure m, List<AttrProxMetric> am) {
-        
+
         if (k < 1 || k >= ds.size() - 1)
             throw new IllegalArgumentException("k-distance is not defined for neighbor " + k + "(only for 1 <= k <= |set| - 1)");
-        
+
         double[][] dist = distances(ds, m, am);
         double[] res = new double[dist.length];
         for (int i = 0; i < res.length; i++) {
@@ -62,7 +102,7 @@ public class Dist {
         }
         return res;
     }
-    
+
 
     static public double[][] distances(Dataset ds, ProximityMeasure m, List<AttrProxMetric> metrics) {
 
@@ -79,4 +119,16 @@ public class Dist {
         return dist;
     }
 
+    static public double[] distances(Dataset ds, int item, ProximityMeasure m, List<AttrProxMetric> metrics) {
+
+        if (metrics == null) {
+            metrics = AttrProxMetric.metrics.forDs(ds);
+        }
+        double[] dist = new double[ds.size()];
+        for(int i = 0; i < ds.size(); i++) {
+            dist[i] = m.distance(metrics, ds.item(i), ds.item(item), ds);
+            dist[item] = 0.0;
+        }
+        return dist;
+    }
 }

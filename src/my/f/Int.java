@@ -64,4 +64,11 @@ public class Int {
         double rnd = Math.random();
         return (int)(rnd * width);
     }
+    
+    static public int[] fill(int arraySize, int val)
+    {
+        int[] tmp = new int[arraySize];
+        Arrays.fill(tmp, val);
+        return tmp;
+    }
 }
