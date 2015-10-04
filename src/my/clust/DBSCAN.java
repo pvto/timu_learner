@@ -1,5 +1,6 @@
 package my.clust;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -76,15 +77,20 @@ public class DBSCAN {
         modes[item] = Clustering.MODE_CORE;
 
         double[] di = dist != null ?  dist[item] : Dist.distances(ds, item, m, metrics);
+        ArrayList<Integer> toScan = new ArrayList<Integer>();
         for(int i = 0; i < di.length; i++) {
             if (clusterings[i] != UNCLUSTERED) { continue; }
             else if (di[i] <= Eps) {
                 if (nbsize[i] >= minPts) {
-                    scanCluster(i, currCluster, dist, minPts, Eps, clusterings, nbsize, modes, ds, m, metrics);
+                    toScan.add(i);
                 } else {
                     clusterings[i] = currCluster;
                 }
             }
+        }
+        di = null;
+        for(Integer i : toScan) {
+            scanCluster(i, currCluster, dist, minPts, Eps, clusterings, nbsize, modes, ds, m, metrics);
         }
     }
 
