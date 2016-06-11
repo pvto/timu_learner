@@ -23,7 +23,7 @@ public class DirectedGraph {
     
     public interface Node<T> {
         
-        double dimensionPos(int dimension);
+        double coordinate(int inDimension);
         int dimensions();
         T getContent();
     }
@@ -56,7 +56,7 @@ public class DirectedGraph {
         public final double[] dims = {0,0};
         
         @Override 
-        public double dimensionPos(int dimension) {
+        public double coordinate(int dimension) {
             return dimension < 2 ? dims[dimension] : 0.0;
         }
         
@@ -85,7 +85,7 @@ public class DirectedGraph {
         public final double[] dims;
         
         @Override
-        public double dimensionPos(int dimension) {
+        public double coordinate(int dimension) {
             return dimension < dims.length ? dims[dimension] : 0.0;
         }
         
@@ -116,7 +116,7 @@ public class DirectedGraph {
         public double dist(Node a, Node b) {
             double sum = 0.0;
             for(int i = 0; i < Math.max(a.dimensions(), b.dimensions()); i++) {
-                double d = a.dimensionPos(i) - b.dimensionPos(i);
+                double d = a.coordinate(i) - b.coordinate(i);
                 sum += d * d;
             }
             return Math.sqrt(sum);
@@ -131,7 +131,7 @@ public class DirectedGraph {
         public double dist(Node a, Node b) {
             double sum = 0.0;
             for(int i = 0; i < Math.max(a.dimensions(), b.dimensions()); i++) {
-                double d = a.dimensionPos(i) - b.dimensionPos(i);
+                double d = a.coordinate(i) - b.coordinate(i);
                 sum += Math.abs(d);
             }
             return sum;

@@ -4,9 +4,11 @@ package my.clust;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import my.AttrProxMetric;
 import my.Dataset;
 import my.Item;
 import my.Ples.Tuple;
+import my.ProximityMeasure;
 import my.f.Int;
 
 /**
@@ -47,12 +49,21 @@ public class Clustering {
     public int[] nbsize;
     public int[] clusterings;
     public int[] itemModes;
+    /** The proximity measure used in obtaining this clustering */
+    public ProximityMeasure proximityMeasure;
+    /** The attribute proximity metrics used in obtaining this clustering */
+    public List<AttrProxMetric> attrProxMetrics;
 
-    public Item[][] getClusters() {
+    public Item[][] getClusters() { return getClusters(true); }
+    public Item[][] getClustersWithoutNoisePoints() { return getClusters(false); }
+    public Item[][] getClusters(boolean INCLUDE_NOISE_POINT_CLUSTER) {
 
         int cmax = Int.max(clusterings),
-            cmin = Int.min(clusterings),
-            clusters = cmax - cmin + 1;
+            cmin = Int.min(clusterings);
+        if (!INCLUDE_NOISE_POINT_CLUSTER && cmin == NOISE) {
+            cmin++;
+        }
+        int clusters = cmax - cmin + 1;
         Item[][] res = new Item[clusters][];
 
         int off = 0;
@@ -70,9 +81,9 @@ public class Clustering {
         }
         return res;
     }
-
+    
     public String toString() {
-        Item[][] cl = getClusters();
+        Item[][] cl = getClusters(true);
         StringBuilder s = new StringBuilder();
         s.append("clusters: ").append(cl.length).append("\n");
         for(Item[] clust : cl)

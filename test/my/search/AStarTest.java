@@ -92,7 +92,7 @@ String map2 =
         List<Edge> path = new AStar().astar(start, end, new Eucl(end));
         char[] map3 = map2.toCharArray();
         for(Edge e : path)
-            map3[((int)e.target.node.dimensionPos(1))*36 + ((int)e.target.node.dimensionPos(0))] = '+';
+            map3[((int)e.target.node.coordinate(1))*36 + ((int)e.target.node.coordinate(0))] = '+';
         System.out.println(new String(map3));
 
         System.out.print(path.size() + " -> ");

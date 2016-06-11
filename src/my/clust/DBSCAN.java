@@ -25,7 +25,13 @@ public class DBSCAN {
 
         checkClassAttribute(ds);
 
+        if (metrics == null) {
+            metrics = AttrProxMetric.metrics.forDs(ds);
+        }
+        
         Clustering res = new Clustering(ds);
+        res.proximityMeasure = m;
+        res.attrProxMetrics = metrics;
         // get distance matrix, if it reasonably fits in memory
         double[][] dist = null;
         if (ds.size() < 10000) {
