@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import my.struct.QuadTree.Quad;
 
 /** This implements a versatile QuadTree structure.  Not thread-safe.
  * 
