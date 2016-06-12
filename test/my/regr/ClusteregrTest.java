@@ -41,7 +41,7 @@ String euclData =
 
     @Test
     public void testRegressorBasic() {
-        
+        System.out.println("testRegressorBasic()");
         Clustering clustering = dbscan.dbscan(eds, 3, Math.sqrt(2.0), ProximityMeasure.Euclidean, null);
         List<Integer> clusterInds = Int.uniq(clustering.clusterings);
         assertEquals(4, clusterInds.size()); // just check that we have 1+3 clusters as expected from data
@@ -49,15 +49,7 @@ String euclData =
         Clusteregr regr = new Clusteregr();
         Means itemMean = new Means.ItemMean(new AttrMean[]{Means.dmean, Means.dmean});
 
-        regr.learnRegression(eds, clustering, itemMean, 
-                (Item o1, Item o2) -> { 
-                    double a = o1.dattr(0);  double b = o2.dattr(0);
-                    if (a > b) return 1; else if (b > 2) return -1;
-                    a = o1.dattr(1);  b = o2.dattr(1);
-                    if (a > b) return 1; else if (b > 2) return -1;
-                    return 0;
-                }
-        );
+        regr.learnRegression(eds, clustering, itemMean, Item.Items.comparatorOfDD);
         System.out.println(regr.clusterMeanValues);
         Item cNoise = regr.regress(eds.item(0));
         System.out.println(cNoise);
@@ -75,10 +67,29 @@ String euclData =
                 <
                 clustering.proximityMeasure.distance(clustering.attrProxMetrics, regr.clusterMeanValues.get(2).subitem(0,2), eds.item(12), eds)
         );
-        
     }
+    
+    
     @Test
     public void testRegression() {
+        System.out.println("testRegression()");
+        Clustering clustering = dbscan.dbscan(eds, 3, Math.sqrt(2.0), ProximityMeasure.Euclidean, null);
+        
+        Clusteregr regr = new Clusteregr();
+        Means itemMean = new Means.ItemMean(new AttrMean[]{Means.dmean, Means.dmean});
+
+        regr.learnRegression(eds, clustering, itemMean, Item.Items.comparatorOfDD);
+        Item c00 = regr.regress(new int[]{0}, eds.item(4)); // regress to find (x,y) by supplying x only
+        System.out.println(c00);
+        assertEquals((0+0+1)/3.0, c00.dattr(0), 1e-6);
+        Item c11 = regr.regress(new int[]{0}, eds.item(11)); // (7,y) -> (x,y) = (6,0.5)
+        System.out.println(c11);
+        assertEquals((6+5+7)/3.0, c11.dattr(0), 1e-6);
+        Item c07 = regr.regress(new int[]{0}, eds.item(7)); // (5,y) -> (x,y) = (?,?), an interpolated value somewhere between (3.166,2.166) and (6,0.5)
+        System.out.println(eds.item(7) + " -> " + c07);
+        assertTrue(c07.dattr(0) < regr.clusterMeanValues.get(2).dattr(0));
+        assertTrue(c07.dattr(1) > regr.clusterMeanValues.get(2).dattr(1));
+        //assertEquals((6+5+7)/3.0, c11.dattr(0), 1e-6);
     }
 
 }

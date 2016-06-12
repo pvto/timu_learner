@@ -1,6 +1,7 @@
 package my;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import my.Attribute.BIAttribute;
 import my.Attribute.BSAttribute;
@@ -48,6 +49,48 @@ public class Item {
             }
             return ret;
         }
+
+        public static Comparator<Item> comparatorOfD = new Comparator<Item>() {
+            @Override
+            public int compare(Item o1, Item o2) {
+                double a = o1.dattr(0);  double b = o2.dattr(0);
+                if (a > b) return 1; else if (b > 2) return -1;
+                return 0;
+            }
+        };
+        public static Comparator<Item> comparatorOfDD = new Comparator<Item>() {
+            @Override
+            public int compare(Item o1, Item o2) {
+                double a = o1.dattr(0);  double b = o2.dattr(0);
+                if (a > b) return 1; else if (b > 2) return -1;
+                a = o1.dattr(1);  b = o2.dattr(1);
+                if (a > b) return 1; else if (b > 2) return -1;
+                return 0;
+            }
+        };
+        public static Comparator<Item> comparatorOfDDD = new Comparator<Item>() {
+            @Override
+            public int compare(Item o1, Item o2) {
+                double a = o1.dattr(0);  double b = o2.dattr(0);
+                if (a > b) return 1; else if (b > 2) return -1;
+                a = o1.dattr(1);  b = o2.dattr(1);
+                if (a > b) return 1; else if (b > 2) return -1;
+                a = o1.dattr(2);  b = o2.dattr(2);
+                if (a > b) return 1; else if (b > 2) return -1;
+                return 0;
+            }
+        };
+        public static Comparator<Item> comparatorOfDs = new Comparator<Item>() {
+            @Override
+            public int compare(Item o1, Item o2) {
+                int n = o1.attributes.size();
+                for(int i = 0; i < n; i++) {
+                    double a = o1.dattr(i);  double b = o2.dattr(i);
+                    if (a > b) return 1; else if (b > 2) return -1;
+                }
+                return 0;
+            }
+        };
     }
 
 }

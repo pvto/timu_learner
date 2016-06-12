@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import my.AttrProxMetric;
 import my.Attribute.IAttribute;
 import my.Dataset;
 import my.Item;
@@ -69,11 +70,35 @@ public class Clusteregr {
     
     
     public Item regress(Item newItem) {
+        return regress(clustering.attrProxMetrics, newItem);
+    }
+    
+    public Item regress(int[] boundAttributes, Item newItem) {
+        if (boundAttributes.length < 1)
+            throw new IllegalArgumentException("Can't regress without bound attributes");
+        
+        List<AttrProxMetric> m = new ArrayList<>();
+        for(int i = 0; i < clustering.attrProxMetrics.size(); i++) {
+            boolean found = false;
+            for(int attr : boundAttributes) {
+                if (attr == i) {
+                    found = true;
+                    m.add(clustering.attrProxMetrics.get(i));
+                }
+            }
+            if (!found) {
+                m.add(AttrProxMetric.DoNotMeasureMetric);
+            }
+        }
+        return regress(m, newItem);
+    }
+    
+    public Item regress(List<AttrProxMetric> attrProxMetrics, Item newItem) {
         // 1) find closest item in the set of cluster mean values
         int closestIndex = 0;
         double closestDistance = Double.MAX_VALUE;
         for(int i = 0; i < clusterMeanValues.size(); i++) {
-            double dist = clustering.proximityMeasure.distance(clustering.attrProxMetrics, newItem, clusterMeanValues.get(i), dataset);
+            double dist = clustering.proximityMeasure.distance(attrProxMetrics, newItem, clusterMeanValues.get(i), dataset);
             if (dist < closestDistance) {
                 closestDistance = dist;
                 closestIndex = i;
@@ -89,8 +114,8 @@ public class Clusteregr {
             if (nextClosest == null) {
                 nextClosest = tmp;
             } else {
-                double distA = clustering.proximityMeasure.distance(clustering.attrProxMetrics, newItem, nextClosest, dataset);
-                double distB = clustering.proximityMeasure.distance(clustering.attrProxMetrics, newItem, tmp, dataset);
+                double distA = clustering.proximityMeasure.distance(attrProxMetrics, newItem, nextClosest, dataset);
+                double distB = clustering.proximityMeasure.distance(attrProxMetrics, newItem, tmp, dataset);
                 if (distB < distA) {
                     nextClosest = tmp;
                 }
@@ -105,17 +130,17 @@ public class Clusteregr {
             // This is accomplished here by a subdividing approximation that runs between the two points.
             Item high = nextClosest;
             Item mid = itemMean.mean(new Item[]{low, high});
-            double distLow = clustering.proximityMeasure.distance(clustering.attrProxMetrics, newItem, low, dataset);
-            double distHigh = clustering.proximityMeasure.distance(clustering.attrProxMetrics, newItem, high, dataset);
+            double distLow = clustering.proximityMeasure.distance(attrProxMetrics, newItem, low, dataset);
+            double distHigh = clustering.proximityMeasure.distance(attrProxMetrics, newItem, high, dataset);
             for(int i = 0; i < 4; i++) {
-                double distMid = clustering.proximityMeasure.distance(clustering.attrProxMetrics, newItem, mid, dataset);
+                double distMid = clustering.proximityMeasure.distance(attrProxMetrics, newItem, mid, dataset);
                 if (distLow < distMid) {
                     high = mid;
                     distHigh = distMid;
                 }
                 else {
                     Item postMid = itemMean.mean(new Item[]{mid, high});
-                    double distPostMid = clustering.proximityMeasure.distance(clustering.attrProxMetrics, newItem, postMid, dataset);
+                    double distPostMid = clustering.proximityMeasure.distance(attrProxMetrics, newItem, postMid, dataset);
                     if (distLow < distPostMid) {
                         high = mid;
                         distHigh = distMid;

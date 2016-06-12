@@ -9,18 +9,15 @@
             <file>file:/home/paavoto/src/timu_learner/src/my/f/Doub.java</file>
         </group>
         <group>
-            <file>file:/home/paavo/src/timu_learner/src/my/AttrProxMetric.java</file>
             <file>file:/home/paavo/src/timu_learner/src/my/clust/Clustering.java</file>
             <file>file:/home/paavo/src/timu_learner/src/my/Item.java</file>
             <file>file:/home/paavo/src/timu_learner/src/my/DirectedGraph.java</file>
             <file>file:/home/paavo/src/timu_learner/src/my/regr/Clusteregr.java</file>
             <file>file:/home/paavo/src/timu_learner/src/my/Means.java</file>
-            <file>file:/home/paavo/src/timu_learner/src/my/Attribute.java</file>
             <file>file:/home/paavo/src/timu_learner/src/my/clust/DBSCAN.java</file>
             <file>file:/home/paavo/src/timu_learner/test/my/clust/DBSCANTest.java</file>
             <file>file:/home/paavo/src/timu_learner/src/my/ProximityMeasure.java</file>
             <file>file:/home/paavo/src/timu_learner/test/my/regr/ClusteregrTest.java</file>
-            <file>file:/home/paavo/src/timu_learner/src/my/f/Dist.java</file>
         </group>
     </open-files>
 </project-private>
