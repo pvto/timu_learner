@@ -13,7 +13,7 @@ import static my.AttrProxMetric.IMetric;
 public interface ProximityMeasure {
 //
 //    static enum Metrics {
-//        
+//
 //        Manhattan(DistanceMetric.Manhattan),
 //        Euclidean(DistanceMetric.Euclidean),
 //        SimpleMatchingCoefficient(DistanceMetric.SimpleMatchingCoefficient),
@@ -28,15 +28,15 @@ public interface ProximityMeasure {
 //        }
 //    }
 
-    
+
     double distance(List<AttrProxMetric> metrics, Item a, Item b, Dataset ds);
 
-    
+
 //implementations follow...
-    
+
 //---proximity measures---
-    
-    
+
+
 //---quantitative distances---
     static final public ProximityMeasure Manhattan = new ProximityMeasure() {
 
@@ -73,7 +73,32 @@ public interface ProximityMeasure {
             return Math.sqrt(d);
         }
     };
-    
+
+
+    static public class NDimDist implemets ProximityMeasure {
+
+        public double exp = 1.0;
+
+        @Override
+        public double distance(List<AttrProxMetric> metrics, Item a, Item b, Dataset ds) {
+            double d = 0.0;
+            int n = a.attributes.size();
+            for (int i = n - 1; i >= 0; i--) {
+                if (Dataset.classAttribute(ds) == n) {
+                    continue;
+                }
+                AttrProxMetric m = metrics.get(i);
+                double adist = m.difference(a.attributes.get(i), b.attributes.get(i));
+                d += Math.pow(adist, exp);
+            }
+            return Math.pow(d, 1.0 / exp);
+        }
+    };
+
+    static final public ProximityMeasure CubicDist = new NDimDist() {{{ this.exp = 3.0; }}};
+
+    static final public ProximityMeasure QuadraticDist = new NDimDist() {{{ this.exp = 4.0; }}};
+
 //---binary similarities---
 
     static final public ProximityMeasure SimpleMatchingCoefficient = new ProximityMeasure() {
@@ -145,14 +170,14 @@ public interface ProximityMeasure {
             return num / den;
         }
     };
-    
+
 //---qualitative similarities---
-    
+
     static final public ProximityMeasure QualitativeSimilarity = Manhattan;
 
 
 //---mixed similarities
-    
+
     static final public ProximityMeasure HEOM = new ProximityMeasure() {
 
         @Override
@@ -180,13 +205,13 @@ public interface ProximityMeasure {
 
     static final public ProximityMeasure HVDM_1 = new HVDM(1.0);
     static final public ProximityMeasure HVDM_2 = new HVDM(2.0);
-    
+
     static public class HVDM implements ProximityMeasure {
         public final double NOMEXP;
         public HVDM(double nomExp) { this.NOMEXP = nomExp; }
         @Override
         public double distance(List<AttrProxMetric> metrics, Item a, Item b, Dataset ds) {
-            double d = 0.0;    
+            double d = 0.0;
             int n = a.attributes.size();
             int clz = Dataset.classAttribute(ds);
             Set<Attribute> C = Dataset.distinctAttributeSet(ds, clz);
@@ -212,10 +237,10 @@ public interface ProximityMeasure {
             }
             return Math.sqrt(d);
         }
-        
+
     };
-    
-    
+
+
 
     /**
      * a validity check for items
